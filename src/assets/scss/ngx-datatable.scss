@@ -27,6 +27,13 @@
       &.datatable-row-even {
         background-color: #ffffff;
       }
+      &:hover {
+        background-color: #eee;
+      }
+      &.active {
+        //background-color: blue;
+        //font-weight: 600;
+      }
       .datatable-body-cell {
         text-align: left;
         vertical-align: top;
@@ -34,9 +41,6 @@
         padding: 4px;
         word-wrap: break-word;
       }
-    }
-    .datatable-body-row:hover {
-      background-color: #f5f5f5;
     }
     .datatable-body-row .datatable-body-cell:first-child {
       border-left: 0;
@@ -174,8 +178,7 @@ input[type=checkbox]:focus {
   content: "1";
 }
 
-input[type=checkbox],
-.ngx-datatable input[type=checkbox]{
+.ngx-datatable input[type=checkbox] {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
@@ -250,10 +253,6 @@ input[type=checkbox],
   }
 }
 
-datatable-body-row.datatable-body-row.active {
-  font-weight: 600;
-}
-
 datatable-scroller {
   width: 100% !important;
 }
@@ -264,4 +263,9 @@ label.datatable-checkbox {
 
 .datatable-select .datatable-row-wrapper {
   cursor: pointer;
+}
+
+.ngx-datatable.highlight-select .datatable-body .datatable-body-row.active {
+  background-color: lightgrey;
+  font-weight: 600;
 }

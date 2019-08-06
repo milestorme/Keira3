@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SidebarService } from './sidebar/sidebar.service';
 
 @Component({
@@ -6,30 +6,8 @@ import { SidebarService } from './sidebar/sidebar.service';
   templateUrl: './main-window.component.html',
   styleUrls: ['./main-window.component.scss']
 })
-export class MainWindowComponent implements OnInit {
-
-  title = 'Keira3';
-
+export class MainWindowComponent {
   constructor(
     public sidebarService: SidebarService,
   ) { }
-
-  ngOnInit() {
-  }
-
-  toggleSidebar() {
-    this.sidebarService.setSidebarState(!this.sidebarService.getSidebarState());
-  }
-
-  toggleBackgroundImage() {
-    this.sidebarService.hasBackgroundImage = !this.sidebarService.hasBackgroundImage;
-  }
-
-  getSideBarState() {
-    return this.sidebarService.getSidebarState();
-  }
-
-  hideSidebar() {
-    this.sidebarService.setSidebarState(true);
-  }
 }

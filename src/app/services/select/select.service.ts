@@ -1,17 +1,10 @@
-import { TableRow } from '../../types';
-import { FormControl, FormGroup } from '@angular/forms';
+import { TableRow } from '../../types/general';
 import { QueryService } from '../query.service';
 import { HandlerService } from '../handlers/handler.service';
+import { SearchService } from '../search/search.service';
 
-export abstract class SelectService<T extends TableRow> {
-  query: string;
-  rows: T[];
-  fields = new FormGroup({});
-  queryForm = new FormGroup({
-    'limit': new FormControl(100),
-    'fields': this.fields,
-  });
-
+export abstract class SelectService<T extends TableRow> extends SearchService<T> {
+  /* istanbul ignore next */ // because of: https://github.com/gotwarlost/istanbul/issues/690
   constructor(
     protected queryService: QueryService,
     public handlerService: HandlerService<T>,
@@ -20,23 +13,7 @@ export abstract class SelectService<T extends TableRow> {
     protected entityNameField: string,
     protected fieldList: string[],
   ) {
-    for (const field of this.fieldList) {
-      this.fields.addControl(field, new FormControl());
-    }
-
-    this.query = this.queryService.getSearchQuery(this.entityTable, this.queryForm.getRawValue());
-
-    this.queryForm.valueChanges.subscribe(() => {
-      if (this.queryForm.valid) {
-        this.query = this.queryService.getSearchQuery(this.entityTable, this.queryForm.getRawValue());
-      }
-    });
-  }
-
-  onSearch() {
-    this.queryService.query<T>(this.query).subscribe((data) => {
-      this.rows = data.results;
-    });
+    super(queryService, entityTable, fieldList);
   }
 
   onSelect({ selected }) {

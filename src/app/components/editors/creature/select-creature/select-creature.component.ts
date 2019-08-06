@@ -1,10 +1,14 @@
 import { Component, } from '@angular/core';
 
-import { SelectComponent } from '../../select.component';
-import { CreatureTemplate } from '../creature-template/creature-template.type';
+import { SelectComponent } from '../../shared/select.component';
+import {
+  CREATURE_TEMPLATE_CUSTOM_STARTING_ID,
+  CREATURE_TEMPLATE_ID,
+  CREATURE_TEMPLATE_TABLE,
+  CreatureTemplate
+} from '../../../../types/creature-template.type';
 import { CreatureSelectService } from '../../../../services/select/creature-select.service';
 import { CreatureHandlerService } from '../../../../services/handlers/creature-handler.service';
-import { CREATURE_TEMPLATE_CUSTOM_STARTING_ID, CREATURE_TEMPLATE_ID, CREATURE_TEMPLATE_TABLE } from '../../../../constants';
 import { QueryService } from '../../../../services/query.service';
 
 @Component({
@@ -13,6 +17,7 @@ import { QueryService } from '../../../../services/query.service';
   styleUrls: ['./select-creature.component.scss']
 })
 export class SelectCreatureComponent extends SelectComponent<CreatureTemplate> {
+  /* istanbul ignore next */ // because of: https://github.com/gotwarlost/istanbul/issues/690
   constructor(
     public selectService: CreatureSelectService,
     public handlerService: CreatureHandlerService,

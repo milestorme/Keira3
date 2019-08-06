@@ -1,8 +1,9 @@
-import { Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 
-import { TableRow } from '../../types';
+import { TableRow } from '../../types/general';
+import { Observable } from 'rxjs';
 
-export abstract class HandlerService<T extends TableRow> {
+export abstract class HandlerService<T extends TableRow> implements CanActivate {
   private _selected: string;
   selectedName: string;
   isNew = false;
@@ -20,5 +21,14 @@ export abstract class HandlerService<T extends TableRow> {
     this.selectedName = name;
 
     this.router.navigate([this.mainEditorRoutePath]);
+  }
+
+  canActivate(route: ActivatedRouteSnapshot): boolean {
+    if (!!this._selected) {
+      return true;
+    }
+
+    this.router.navigate(['/']);
+    return false;
   }
 }

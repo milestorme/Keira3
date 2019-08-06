@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-electron": {
+    "Keira3": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -27,7 +27,9 @@
             "styles": [
               "src/assets/scss/main.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/squel/dist/squel.min.js"
+            ]
           },
           "configurations": {
             "dev": {
@@ -69,21 +71,21 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-electron:build"
+            "browserTarget": "Keira3:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "angular-electron:build:dev"
+              "browserTarget": "Keira3:build:dev"
             },
             "production": {
-              "browserTarget": "angular-electron:build:production"
+              "browserTarget": "Keira3:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-electron:build"
+            "browserTarget": "Keira3:build"
           }
         },
         "test": {
@@ -93,7 +95,17 @@
             "polyfills": "src/polyfills-test.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "scripts": [],
+            "codeCoverageExclude": [
+              "src/app/services/electron.service.ts",
+              "src/app/config/**/*",
+              "src/app/constants/**/*",
+              "src/app/types/**/*",
+              "src/app/test-utils/**/*",
+              "src/app/test-utils/test-helpers.ts"
+            ],
+            "scripts": [
+              "node_modules/squel/dist/squel.min.js"
+            ],
             "styles": [
               "src/assets/scss/main.scss"
             ],
@@ -121,7 +133,7 @@
         }
       }
     },
-    "angular-electron-e2e": {
+    "Keira3-e2e": {
       "root": "e2e",
       "projectType": "application",
       "architect": {
@@ -139,7 +151,7 @@
       }
     }
   },
-  "defaultProject": "angular-electron",
+  "defaultProject": "Keira3",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

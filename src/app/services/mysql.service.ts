@@ -4,7 +4,7 @@ import * as mysql from 'mysql';
 import { Connection, ConnectionConfig, FieldInfo, MysqlError } from 'mysql';
 
 import { ElectronService } from './electron.service';
-import { MysqlResult, TableRow } from '../types';
+import { MysqlResult, TableRow } from '../types/general';
 
 
 @Injectable({
@@ -28,6 +28,7 @@ export class MysqlService {
     private electronService: ElectronService,
     private ngZone: NgZone,
   ) {
+    /* istanbul ignore next */
     if (this.electronService.isElectron()) {
       this.mysql = window.require('mysql');
     }
@@ -43,34 +44,42 @@ export class MysqlService {
 
     this._connection = this.mysql.createConnection(this.config);
 
-    return new Observable(observer => {
-      this._connection.connect((err: MysqlError) => {
-        this.ngZone.run(() => {
-          if (err) {
-            this._connectionEstablished = false;
-            observer.error(err);
-          } else {
-            this._connectionEstablished = true;
-            observer.next();
-          }
-          observer.complete();
-        });
-      });
+    return new Observable(subscriber => {
+      this._connection.connect(this.getConnectCallback(subscriber));
     });
   }
 
-  query<T extends TableRow>(queryString: string, values?: string[]): Observable<MysqlResult<T>> {
-    return new Observable<MysqlResult<T>>(observer => {
-      this._connection.query(queryString, values, (err: MysqlError, results?: T[], fields?: FieldInfo[]) => {
-        this.ngZone.run(() => {
-          if (err) {
-            observer.error(err);
-          } else {
-            observer.next({ results, fields });
-          }
-          observer.complete();
-        });
+  private getConnectCallback(subscriber) {
+    return (err: MysqlError) => {
+      this.ngZone.run(() => {
+        if (err) {
+          this._connectionEstablished = false;
+          subscriber.error(err);
+        } else {
+          this._connectionEstablished = true;
+          subscriber.next();
+        }
+        subscriber.complete();
       });
+    };
+  }
+
+  dbQuery<T extends TableRow>(queryString: string, values?: string[]): Observable<MysqlResult<T>> {
+    return new Observable<MysqlResult<T>>(subscriber => {
+      this._connection.query(queryString, values, this.getQueryCallback<T>(subscriber));
     });
+  }
+
+  private getQueryCallback<T extends TableRow>(subscriber) {
+    return (err: MysqlError, results?: T[], fields?: FieldInfo[]) => {
+      this.ngZone.run(() => {
+        if (err) {
+          subscriber.error(err);
+        } else {
+          subscriber.next({results, fields});
+        }
+        subscriber.complete();
+      });
+    };
   }
 }

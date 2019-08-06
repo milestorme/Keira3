@@ -1,6 +1,10 @@
 <div class="container">
+  <div class="mt-3 text-center">
+    <span class="lead font-weight-bold">Keira {{ KEIRA_VERSION }}</span>
+  </div>
+  <hr>
   <div class="form-wrapper" *ngIf="form">
-    <form [formGroup]="form">
+    <form [formGroup]="form" class="mb-4">
       <div class="form-group row">
         <label class="col-4 col-form-label" for="host">Host</label>
         <input
@@ -32,6 +36,7 @@
         <label class="col-4 col-form-label" for="password">Password</label>
         <input
           [formControlName]="'password'"
+          type="password"
           class="form-control col-7"
           id="password"
           placeholder="Enter your MySQL user password"
@@ -49,25 +54,6 @@
       <button class="btn btn-success connect-button" (click)="onConnect()">Connect</button>
     </form>
 
-    <div *ngIf="error" class="alert alert-danger error-box">
-      <table>
-        <tr>
-          <td>Error:</td>
-          <td>{{ error.sqlMessage }}</td>
-        </tr>
-        <tr>
-          <td>Code:</td>
-          <td>{{ error.code }}</td>
-        </tr>
-        <tr>
-          <td>Errno:</td>
-          <td>{{ error.errno }}</td>
-        </tr>
-        <tr>
-          <td>SQL State:</td>
-          <td>{{ error.sqlState }}</td>
-        </tr>
-      </table>
-    </div>
+    <app-query-error [error]="error"></app-query-error>
   </div>
 </div>

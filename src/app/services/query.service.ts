@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
-import * as squel from 'squel';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Squel, Delete, Insert } from 'squel';
 
 import { MysqlService } from './mysql.service';
-import { MaxRow, MysqlResult, QueryForm, TableRow } from '../types';
-import { squelConfig } from '../squel.config';
-import { Observable } from 'rxjs';
+import { MaxRow, MysqlResult, QueryForm, TableRow } from '../types/general';
+import { squelConfig } from '../config/squel.config';
+import { ConfigService } from './config.service';
+
+declare const squel: Squel & {flavour: null};
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +17,18 @@ export class QueryService {
 
   constructor(
     private mysqlService: MysqlService,
+    private configService: ConfigService,
   ) { }
 
   query<T extends TableRow>(queryString: string, values?: string[]): Observable<MysqlResult<T>> {
-    return this.mysqlService.query<T>(queryString, values);
+    return this.mysqlService.dbQuery<T>(queryString, values).pipe(
+      tap(val => {
+        if (this.configService.debugMode) {
+          console.log(`\n${queryString}`);
+          console.log(val);
+        }
+      })
+    );
   }
 
   getSearchQuery(table: string, queryForm: QueryForm) {
@@ -129,8 +141,8 @@ export class QueryService {
 
   private getFinalDiffDeleteInsertQuery<T extends TableRow>(
     addedOrEditedRows: T[],
-    deleteQuery: squel.Delete,
-    insertQuery: squel.Insert,
+    deleteQuery: Delete,
+    insertQuery: Insert,
   ): string {
     let query = deleteQuery.toString() + ';\n';
 
@@ -145,16 +157,16 @@ export class QueryService {
 
   // Tracks difference between two groups of rows (with TWO keys) and generate DELETE/INSERT query
   getDiffDeleteInsertTwoKeysQuery<T extends TableRow>(
-    tableName: string,   // the name of the table (example: 'creature_loot_template')
-    primaryKey1: string, // first  primary key (example: 'Entry')
-    primaryKey2: string, // second primary key (example: 'Item')
-    currentRows: T[],    // object of the original rows
-    newRows: T[],        // array of the new rows
+    tableName: string,        // the name of the table (example: 'creature_loot_template')
+    primaryKey1: string|null, // first  primary key (example: 'Entry')
+    primaryKey2: string,      // second primary key (example: 'Item')
+    currentRows: T[],         // object of the original rows
+    newRows: T[],             // array of the new rows
   ): string {
 
     if (!newRows || !currentRows) { return ''; }
 
-    if (newRows.length === 0) {
+    if (primaryKey1 && newRows.length === 0) {
       // all rows have been deleted
       return `DELETE FROM \`${tableName}\` WHERE \`${primaryKey1}\` = ${currentRows[0][primaryKey1]};\n`;
     }
@@ -169,11 +181,14 @@ export class QueryService {
       return '-- There are no changes';
     }
 
-    const deleteQuery: squel.Delete = squel.delete(squelConfig).from(tableName);
-    const insertQuery: squel.Insert = squel.insert(squelConfig).into(tableName);
+    const deleteQuery: Delete = squel.delete(squelConfig).from(tableName);
+    const insertQuery: Insert = squel.insert(squelConfig).into(tableName);
 
-    deleteQuery.where('`' + primaryKey1 + '` = ' + newRows[0][primaryKey1]);
+    if (primaryKey1) {
+      deleteQuery.where('`' + primaryKey1 + '` = ' + newRows[0][primaryKey1]);
+    }
     deleteQuery.where('`' + primaryKey2 + '` IN ?', involvedRows);
+
     insertQuery.setFieldsRows(addedOrEditedRows);
 
     return this.getFinalDiffDeleteInsertQuery(addedOrEditedRows, deleteQuery, insertQuery);
@@ -198,8 +213,8 @@ export class QueryService {
       return '-- There are no changes';
     }
 
-    const deleteQuery: squel.Delete = squel.delete(squelConfig).from(tableName);
-    const insertQuery: squel.Insert = squel.insert(squelConfig).into(tableName);
+    const deleteQuery: Delete = squel.delete(squelConfig).from(tableName);
+    const insertQuery: Insert = squel.insert(squelConfig).into(tableName);
 
     deleteQuery.where('`' + primaryKey + '` IN ?', involvedRows);
     insertQuery.setFieldsRows(addedOrEditedRows);
@@ -211,19 +226,26 @@ export class QueryService {
   getFullDeleteInsertQuery<T extends TableRow>(
     tableName: string,          // the name of the table (example: 'creature_loot_template')
     rows: T[],                  // array of the new rows
-    primaryKey: string,         // first primary key (example: 'Entry'), it will be used to generate the DELETE statement
-    primaryKey2: string = null, // (optional) the second primary key, it will be used to generate the DELETE statement
+    primaryKey: string = null,  // first primary key (example: 'Entry'), it will be used to generate the DELETE statement for ALL rows
+    primaryKey2: string = null, // the second primary key, it will be used to generate the DELETE statement for SPECIFIC rows
   ) {
     if (!rows || rows.length === 0) { return ''; }
 
-    let deleteCondition: string = '`' + primaryKey + '` = ' + rows[0][primaryKey];
+    let deleteCondition: string = '';
+
+    if (primaryKey) {
+      deleteCondition += '`' + primaryKey + '` = ' + rows[0][primaryKey];
+    }
+    if (primaryKey && primaryKey2) {
+      deleteCondition += ` AND `;
+    }
     if (primaryKey2) {
       const ids = rows.map(row => row[primaryKey2]);
-      deleteCondition += ' AND `' + primaryKey2 + '` IN (' + ids.join(', ') + ')';
+      deleteCondition += '`' + primaryKey2 + '` IN (' + ids.join(', ') + ')';
     }
 
-    const deleteQuery: squel.Delete = squel.delete(squelConfig).from(tableName).where(deleteCondition);
-    const insertQuery: squel.Insert = squel.insert(squelConfig).into(tableName).setFieldsRows(rows);
+    const deleteQuery: Delete = squel.delete(squelConfig).from(tableName).where(deleteCondition);
+    const insertQuery: Insert = squel.insert(squelConfig).into(tableName).setFieldsRows(rows);
 
     let query: string = deleteQuery.toString() + ';\n';
     query += insertQuery.toString() + ';\n';

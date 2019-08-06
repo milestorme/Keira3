@@ -1,4 +1,9 @@
-<nav id="sidebar" class="sidebar" [ngClass]="{'sidebar-bg' : hasBackgroundImage()}">
+<nav
+  id="sidebar"
+  class="sidebar"
+  [ngClass]="{'sidebar-bg' : hasBackgroundImage()}"
+  style="background-image: url(assets/img/bg1.jpg);"
+>
   <div class="sidebar-content">
     <perfect-scrollbar>
       <div class="sidebar-header">
@@ -30,34 +35,91 @@
         <ul>
 
           <li>
-            <a href="#" [routerLink]="''">Home</a>
+            <a id="dashboard-toggle" href="#" [routerLink]="''">Dashboard</a>
+          </li>
+
+          <li>
+            <a id="collapse-all" (click)="collapseAll()">Collapse All</a>
           </li>
 
           <li class="header-menu">
             <span>Editors</span>
           </li>
 
-          <li class="sidebar-dropdown active">
-            <a>
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.creature === 'down' }">
+            <a id="creature-editor-toggle" (click)="toggleState('creature')">
               <i class="fa fa-pen"></i>
               <span>Creature</span>
             </a>
 
-            <div class="sidebar-submenu">
+            <div class="sidebar-submenu" [@slide]="menuStates.creature">
               <ul>
                 <li>
-                  <a href="#" [routerLink]="'creature/select'">Select Creature Template</a>
+                  <a href="#" routerLinkActive="active" [routerLink]="'creature/select'">
+                    Select Creature Template
+                  </a>
                 </li>
                 <ng-container *ngIf="creatureHandlerService.selected">
                   <li>
-                    <a href="#" [routerLink]="'creature/creature-template'">creature_template</a>
+                    <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-template'">
+                      Creature Template
+                    </a>
                   </li>
                   <ng-container *ngIf="!creatureHandlerService.isNew">
                     <li>
-                      <a href="#" [routerLink]="'creature/creature-template-addon'">creature_template_addon</a>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-template-addon'">
+                        Template Addon
+                      </a>
                     </li>
                     <li>
-                      <a href="#" [routerLink]="'creature/npc-vendor'">npc_vendor</a>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-onkill-reputation'">
+                        Onkill Reputation
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-equip-template'">
+                        Equip Template
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/npc-vendor'">
+                        Vendor
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/npc-trainer'">
+                        Trainer
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-questitem'">
+                        Quest Item
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-loot-template'">
+                        Creature Loot
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/pickpocketing-loot-template'">
+                        Pickpocketing Loot
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/skinning-loot-template'">
+                        Skinning Loot
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/spawns'">
+                        Spawns
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/spawns-addon'">
+                        Spawns Addon
+                      </a>
                     </li>
                   </ng-container>
                 </ng-container>
@@ -66,18 +128,114 @@
             </div>
           </li>
 
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.quest === 'down' }">
+            <a (click)="toggleState('quest')">
+              <i class="fa fa-pen"></i>
+              <span>Quest</span>
+            </a>
+
+            <div class="sidebar-submenu" [@slide]="menuStates.quest">
+              <ul>
+                <li>
+                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
+                    Coming soon...
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.gameobject === 'down' }">
+            <a (click)="toggleState('gameobject')">
+              <i class="fa fa-pen"></i>
+              <span>GameObject</span>
+            </a>
+
+            <div class="sidebar-submenu" [@slide]="menuStates.gameobject">
+              <ul>
+                <li>
+                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
+                    Coming soon...
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.item === 'down' }">
+            <a (click)="toggleState('item')">
+              <i class="fa fa-pen"></i>
+              <span>Item</span>
+            </a>
+
+            <div class="sidebar-submenu" [@slide]="menuStates.item">
+              <ul>
+                <li>
+                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
+                    Coming soon...
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.smartAi === 'down' }">
+            <a (click)="toggleState('smartAi')">
+              <i class="fa fa-pen"></i>
+              <span>SmartAI</span>
+            </a>
+
+            <div class="sidebar-submenu" [@slide]="menuStates.smartAi">
+              <ul>
+                <li>
+                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
+                    Coming soon...
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.conditions === 'down' }">
+            <a (click)="toggleState('conditions')">
+              <i class="fa fa-pen"></i>
+              <span>Conditions</span>
+            </a>
+
+            <div class="sidebar-submenu" [@slide]="menuStates.conditions">
+              <ul>
+                <li>
+                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
+                    Coming soon...
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.gossip === 'down' }">
+            <a (click)="toggleState('gossip')">
+              <i class="fa fa-pen"></i>
+              <span>Gossip</span>
+            </a>
+
+            <div class="sidebar-submenu" [@slide]="menuStates.gossip">
+              <ul>
+                <li>
+                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
+                    Coming soon...
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
         </ul>
       </div>
     </perfect-scrollbar>
   </div>
-  <div class="sidebar-footer">
 
-    <button class="btn btn-secondary" (click)="toggleSidebar()">
-      <i class="fas fa-angle-double-left"></i>
+    <button class="btn btn-secondary btn-sm sidebar-button" (click)="toggleSidebar()">
+      <i class="fas {{ getSideBarState() ? 'fa-angle-double-right' : 'fa-angle-double-left' }}"></i>
     </button>
-
-    <button class="btn btn-secondary sidebar-button" (click)="toggleSidebar()" [ngClass]="{'sidebar-button-hidden' : !getSideBarState()}">
-      <i class="fas fa-angle-double-right"></i>
-    </button>
-  </div>
 </nav>

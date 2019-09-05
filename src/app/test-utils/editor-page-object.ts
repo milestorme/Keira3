@@ -3,6 +3,7 @@ import { BsModalService } from 'ngx-bootstrap';
 
 import { PageObject } from './page-object';
 import { QueryOutputComponentPage } from '../components/editors/shared/query-output/query-output.component.spec';
+import { TableRow } from '../types/general';
 
 export abstract class EditorPageObject<T> extends PageObject<T> {
   protected readonly queryPo: QueryOutputComponentPage;
@@ -15,6 +16,18 @@ export abstract class EditorPageObject<T> extends PageObject<T> {
   ) {
     super(fixture, config);
     this.queryPo = new QueryOutputComponentPage(fixture as ComponentFixture<any>);
+  }
+
+  changeAllFields<E extends TableRow>(entity: E, excludedFields: string[] = [] ) {
+    let i = 0;
+    for (const field of Object.getOwnPropertyNames(entity)) {
+      if (!excludedFields.includes(field)) {
+        if (!this.getInputById(field).disabled) {
+          this.setInputValueById(field, i);
+          i++;
+        }
+      }
+    }
   }
 
   clickExecuteQuery() {
@@ -33,8 +46,8 @@ export abstract class EditorPageObject<T> extends PageObject<T> {
     this.setInputValue(this.getInputById(inputId), value);
   }
 
-  getSelectorBtn(name: string) {
-    return this.query<HTMLButtonElement>(`#${name}-selector-btn`);
+  getSelectorBtn(name: string, assert = true) {
+    return this.query<HTMLButtonElement>(`#${name}-selector-btn`, assert);
   }
 
   getCellOfDatatableInModal(rowIndex: number, colIndex: number) {
@@ -52,7 +65,6 @@ export abstract class EditorPageObject<T> extends PageObject<T> {
     const element = document.querySelector<HTMLTableDataCellElement>(
       `${tableSelector} tr:nth-child(${rowIndex + 1}) td:nth-child(${colIndex + 1})`
     );
-    console.log(`${tableSelector} tr:nth-child(${rowIndex + 1}) td:nth-child(${colIndex + 1})`);
     expect(element).toBeTruthy(`Unable to find column ${colIndex} of row ${rowIndex} of ${tableSelector}`);
     return element;
   }

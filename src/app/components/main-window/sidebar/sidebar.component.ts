@@ -4,6 +4,9 @@ import { SidebarService } from './sidebar.service';
 
 import { MysqlService } from '../../../services/mysql.service';
 import { CreatureHandlerService } from '../../../services/handlers/creature-handler.service';
+import { QuestHandlerService } from '../../../services/handlers/quest-handler.service';
+import { GameobjectHandlerService } from '../../../services/handlers/gameobject-handler.service';
+import { ItemHandlerService } from '../../../services/handlers/item-handler.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -20,7 +23,7 @@ import { CreatureHandlerService } from '../../../services/handlers/creature-hand
 export class SidebarComponent {
 
   menuStates: { [key: string]: 'down'|'up' } = {
-    creature: 'down',
+    creature: 'up',
     quest: 'up',
     gameobject: 'up',
     item: 'up',
@@ -33,6 +36,9 @@ export class SidebarComponent {
     public sidebarService: SidebarService,
     public mysqlService: MysqlService,
     public creatureHandlerService: CreatureHandlerService,
+    public questHandlerService: QuestHandlerService,
+    public gameobjectHandlerService: GameobjectHandlerService,
+    public itemHandlerService: ItemHandlerService,
   ) {
    }
 

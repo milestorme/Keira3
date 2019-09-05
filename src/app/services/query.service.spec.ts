@@ -28,6 +28,8 @@ describe('QueryService', () => {
   let service: QueryService;
   let configService: ConfigService;
 
+  const QUERY_NO_CHANGES = '-- There are no changes';
+
   beforeEach(() => TestBed.configureTestingModule({
     providers: [
       { provide : MysqlService, useValue: instance(MockedMysqlService) },
@@ -78,7 +80,22 @@ describe('QueryService', () => {
 
       expect(service.getSearchQuery(table, queryForm)).toEqual(
         'SELECT * ' +
-        'FROM `my_keira3` WHERE (myField1 LIKE \'%myValue1%\') AND (myField2 LIKE \'%myValue2%\')'
+        'FROM `my_keira3` WHERE (`myField1` LIKE \'%myValue1%\') AND (`myField2` LIKE \'%myValue2%\')'
+      );
+    });
+
+    it('should properly work when using fields that contain special characters', () => {
+      const queryForm: QueryForm = {
+        fields: {
+          myField1: `The People's Militia`,
+          myField2: `Mi illumino d'immenso`,
+        },
+      };
+
+      expect(service.getSearchQuery(table, queryForm)).toEqual(
+        'SELECT * ' +
+        'FROM `my_keira3` WHERE (`myField1` LIKE \'%The People\\\'s Militia%\') ' +
+        'AND (`myField2` LIKE \'%Mi illumino d\\\'immenso%\')'
       );
     });
 
@@ -93,7 +110,7 @@ describe('QueryService', () => {
 
       expect(service.getSearchQuery(table, queryForm)).toEqual(
         'SELECT * ' +
-        'FROM `my_keira3` WHERE (myField1 LIKE \'%myValue1%\') AND (myField2 LIKE \'%myValue2%\') LIMIT 20'
+        'FROM `my_keira3` WHERE (`myField1` LIKE \'%myValue1%\') AND (`myField2` LIKE \'%myValue2%\') LIMIT 20'
       );
     });
 
@@ -186,9 +203,15 @@ describe('QueryService', () => {
         expect(service.getDiffDeleteInsertTwoKeysQuery(tableName, primaryKey1, primaryKey2, [], null)).toEqual('');
       });
 
+      it('should return empty string if currentRows or newRows are null', () => {
+        expect(service.getDiffDeleteInsertTwoKeysQuery(tableName, primaryKey1, primaryKey2, [], [])).toEqual(
+          QUERY_NO_CHANGES
+        );
+      });
+
       it('should correctly work when there are no changes', () => {
         expect(service.getDiffDeleteInsertTwoKeysQuery(tableName, primaryKey1, primaryKey2, myRows, myRows)).toEqual(
-          '-- There are no changes'
+          QUERY_NO_CHANGES
         );
       });
 
@@ -349,7 +372,7 @@ describe('QueryService', () => {
 
       it('should correctly work when there are no changes', () => {
         expect(service.getDiffDeleteInsertOneKeyQuery(tableName, primaryKey, myRows, myRows)).toEqual(
-          '-- There are no changes'
+          QUERY_NO_CHANGES
         );
       });
 
@@ -509,6 +532,36 @@ describe('QueryService', () => {
 
           expect(service.getFullDeleteInsertQuery(tableName, rows, null, primaryKey2)).toEqual(
             'DELETE' + ' FROM `my_table` WHERE (`pk2` IN (1));\n' +
+            'INSERT' + ' INTO `my_table` (`pk1`, `pk2`, `name`, `attribute1`, `attribute2`) VALUES\n' +
+            '(1234, 1, \'Shin\', 28, 4);\n'
+          );
+        });
+      });
+
+      describe('using no keys', () => {
+        it('should correctly work when adding a group of rows', () => {
+          const rows: MockTwoKeysRow[] = [
+            { pk1: 1234, pk2: 1, name: 'Shin', attribute1: 28, attribute2: 4 },
+            { pk1: 1234, pk2: 2, name: 'Helias', attribute1: 12, attribute2: 4 },
+            { pk1: 1234, pk2: 3, name: 'Kalhac', attribute1: 12, attribute2: 4 },
+          ];
+
+          expect(service.getFullDeleteInsertQuery(tableName, rows)).toEqual(
+            'DELETE' + ' FROM `my_table`;\n' +
+            'INSERT' + ' INTO `my_table` (`pk1`, `pk2`, `name`, `attribute1`, `attribute2`) VALUES\n' +
+            '(1234, 1, \'Shin\', 28, 4),\n' +
+            '(1234, 2, \'Helias\', 12, 4),\n' +
+            '(1234, 3, \'Kalhac\', 12, 4);\n'
+          );
+        });
+
+        it('should correctly work when adding a single row', () => {
+          const rows: MockTwoKeysRow[] = [
+            { pk1: 1234, pk2: 1, name: 'Shin', attribute1: 28, attribute2: 4 },
+          ];
+
+          expect(service.getFullDeleteInsertQuery(tableName, rows)).toEqual(
+            'DELETE' + ' FROM `my_table`;\n' +
             'INSERT' + ' INTO `my_table` (`pk1`, `pk2`, `name`, `attribute1`, `attribute2`) VALUES\n' +
             '(1234, 1, \'Shin\', 28, 4);\n'
           );

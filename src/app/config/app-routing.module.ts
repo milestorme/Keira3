@@ -19,9 +19,38 @@ import {
 } from '../components/editors/creature/pickpocketing-loot-template/pickpocketing-loot-template.component';
 import { SkinningLootTemplateComponent } from '../components/editors/creature/skinning-loot-template/skinning-loot-template.component';
 import { NpcTrainerComponent } from '../components/editors/creature/npc-trainer/npc-trainer.component';
-import { SpawnsComponent } from '../components/editors/creature/spawns/spawns.component';
-import { SpawnsAddonComponent } from '../components/editors/creature/spawns-addon/spawns-addon.component';
+import { CreatureSpawnComponent } from '../components/editors/creature/creature-spawn/creature-spawn.component';
+import { CreatureSpawnAddonComponent } from '../components/editors/creature/creature-spawn-addon/creature-spawn-addon.component';
 import { ComingSoonComponent } from '../components/editors/coming-soon/coming-soon.component';
+import { QuestTemplateComponent } from '../components/editors/quest/quest-template/quest-template.component';
+import { QuestHandlerService } from '../services/handlers/quest-handler.service';
+import { SelectQuestComponent } from '../components/editors/quest/select-quest/select-quest.component';
+import { QuestTemplateAddonComponent } from '../components/editors/quest/quest-template-addon/quest-template-addon.component';
+import { QuestOfferRewardComponent } from '../components/editors/quest/quest-offer-reward/quest-offer-reward.component';
+import { QuestRequestItemsComponent } from '../components/editors/quest/quest-request-items/quest-request-items.component';
+import { GameobjectTemplateComponent } from '../components/editors/gameobject/gameobject-template/gameobject-template.component';
+import {
+  GameobjectTemplateAddonComponent
+} from '../components/editors/gameobject/gameobject-template-addon/gameobject-template-addon.component';
+import { GameobjectHandlerService } from '../services/handlers/gameobject-handler.service';
+import { SelectGameobjectComponent } from '../components/editors/gameobject/select-gameobject/select-gameobject.component';
+import { GameobjectQuestitemComponent } from '../components/editors/gameobject/gameobject-questitem/gameobject-questitem.component';
+import { GameobjectSpawnComponent } from '../components/editors/gameobject/gameobject-spawn/gameobject-spawn.component';
+import { CreatureQueststarterComponent } from '../components/editors/quest/creature-queststarter/creature-queststarter.component';
+import { CreatureQuestenderComponent } from '../components/editors/quest/creature-questender/creature-questender.component';
+import { GameobjectQueststarterComponent } from '../components/editors/quest/gameobject-queststarter/gameobject-queststarter.component';
+import { GameobjectQuestenderComponent } from '../components/editors/quest/gameobject-questender/gameobject-questender.component';
+import {
+  GameobjectLootTemplateComponent
+} from '../components/editors/gameobject/gameobject-loot-template/gameobject-loot-template.component';
+import { SelectItemComponent } from '../components/editors/item/select-item/select-item.component';
+import { ItemTemplateComponent } from '../components/editors/item/item-template/item-template.component';
+import { ItemHandlerService } from '../services/handlers/item-handler.service';
+import { ItemLootTemplateComponent } from '../components/editors/item/item-loot-template/item-loot-template.component';
+import { DisenchantLootTemplateComponent } from '../components/editors/item/disenchant-loot-template/disenchant-loot-template.component';
+import { ProspectingLootTemplateComponent } from '../components/editors/item/prospecting-loot-template/prospecting-loot-template.component';
+import { MillingLootTemplateComponent } from '../components/editors/item/milling-loot-template/milling-loot-template.component';
+import { ItemEnchantmentTemplateComponent } from '../components/editors/item/item-enchantment/item-enchantment-template.component';
 
 const routes: Routes = [
   {
@@ -90,17 +119,139 @@ const routes: Routes = [
         canActivate: [CreatureHandlerService],
       },
       {
-        path: 'spawns',
-        component: SpawnsComponent,
+        path: 'creature-spawn',
+        component: CreatureSpawnComponent,
         canActivate: [CreatureHandlerService],
       },
       {
-        path: 'spawns-addon',
-        component: SpawnsAddonComponent,
+        path: 'creature-spawn-addon',
+        component: CreatureSpawnAddonComponent,
         canActivate: [CreatureHandlerService],
       },
     ]
-  }
+  },
+  {
+    path: 'quest',
+    children: [
+      {
+        path: 'select',
+        component: SelectQuestComponent,
+      },
+      {
+        path: 'quest-template',
+        component: QuestTemplateComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'quest-template-addon',
+        component: QuestTemplateAddonComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'quest-offer-reward',
+        component: QuestOfferRewardComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'quest-request-items',
+        component: QuestRequestItemsComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'creature-queststarter',
+        component: CreatureQueststarterComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'creature-questender',
+        component: CreatureQuestenderComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'gameobject-queststarter',
+        component: GameobjectQueststarterComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'gameobject-questender',
+        component: GameobjectQuestenderComponent,
+        canActivate: [QuestHandlerService],
+      },
+    ]
+  },
+  {
+    path: 'gameobject',
+    children: [
+      {
+        path: 'select',
+        component: SelectGameobjectComponent,
+      },
+      {
+        path: 'gameobject-template',
+        component: GameobjectTemplateComponent,
+        canActivate: [GameobjectHandlerService],
+      },
+      {
+        path: 'gameobject-template-addon',
+        component: GameobjectTemplateAddonComponent,
+        canActivate: [GameobjectHandlerService],
+      },
+      {
+        path: 'gameobject-questitem',
+        component: GameobjectQuestitemComponent,
+        canActivate: [GameobjectHandlerService],
+      },
+      {
+        path: 'gameobject-loot-template',
+        component: GameobjectLootTemplateComponent,
+        canActivate: [GameobjectHandlerService],
+      },
+      {
+        path: 'gameobject-spawn',
+        component: GameobjectSpawnComponent,
+        canActivate: [GameobjectHandlerService],
+      },
+    ]
+  },
+  {
+    path: 'item',
+    children: [
+      {
+        path: 'select',
+        component: SelectItemComponent,
+      },
+      {
+        path: 'item-template',
+        component: ItemTemplateComponent,
+        canActivate: [ItemHandlerService],
+      },
+      {
+        path: 'item-enchantment-template',
+        component: ItemEnchantmentTemplateComponent,
+        canActivate: [ItemHandlerService],
+      },
+      {
+        path: 'item-loot-template',
+        component: ItemLootTemplateComponent,
+        canActivate: [ItemHandlerService],
+      },
+      {
+        path: 'disenchant-loot-template',
+        component: DisenchantLootTemplateComponent,
+        canActivate: [ItemHandlerService],
+      },
+      {
+        path: 'prospecting-loot-template',
+        component: ProspectingLootTemplateComponent,
+        canActivate: [ItemHandlerService],
+      },
+      {
+        path: 'milling-loot-template',
+        component: MillingLootTemplateComponent,
+        canActivate: [ItemHandlerService],
+      },
+    ]
+  },
 ];
 
 @NgModule({

@@ -7,6 +7,9 @@ export const ITEM_TEMPLATE_SEARCH_FIELDS = [
   ITEM_TEMPLATE_ID,
   ITEM_TEMPLATE_NAME,
 ];
+export const ITEM_TEMPLATE_CUSTOM_STARTING_ID = 90_000;
+
+export const DISENCHANT_TEMPLATE_LOOT_ID = 'DisenchantID';
 
 export class ItemTemplate extends TableRow {
   entry: number = 0;

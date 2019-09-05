@@ -8,45 +8,12 @@ import { QueryService } from '../../../../services/query.service';
 import { SelectCreatureComponent } from './select-creature.component';
 import { CreatureSelectService } from '../../../../services/select/creature-select.service';
 import { SelectCreatureModule } from './select-creature.module';
-import { PageObject } from '../../../../test-utils/page-object';
 import { CreatureTemplate } from '../../../../types/creature-template.type';
+import { SelectPageObject } from '../../../../test-utils/select-page-object';
 
-class SelectCreatureComponentPage extends PageObject<SelectCreatureComponent> {
-  get createInput() { return this.query<HTMLInputElement>('app-create input#id'); }
-  get selectNewBtn() { return this.query<HTMLButtonElement>('app-create #select-button'); }
-  get freeStatusWrapper() { return this.query<HTMLDivElement>('#id-free-status'); }
-
-  get queryWrapper() { return this.query<HTMLElement>('code.hljs'); }
-
-  get searchEntryInput() { return this.query<HTMLInputElement>('input#entry'); }
-  get searchNameInput() { return this.query<HTMLInputElement>('input#name'); }
-  get searchSubnameInput() { return this.query<HTMLInputElement>('input#subname'); }
-  get searchLimitInput() { return this.query<HTMLInputElement>('input#limit'); }
-  get searchBtn() { return this.query<HTMLButtonElement>('#search-btn'); }
-
-  get topBar() { return this.query<HTMLElement>('app-top-bar'); }
-
-  expectTopBarCreatingNew(id: number) {
-    expect(this.topBar.innerText).toContain(`Creating new: ${id}`);
-  }
-
-  expectTopBarEditing(id: number, name: string) {
-    expect(this.topBar.innerText).toContain(`Editing: ${name} (${id})`);
-  }
-
-  expectNewEntityFree() {
-    const error = 'Expected new entity to be free';
-    expect(this.selectNewBtn.disabled).toBe(false, error);
-    expect(this.freeStatusWrapper.innerHTML).toContain('fa-check-circle', error);
-    expect(this.freeStatusWrapper.innerText).toContain('The entry is free', error);
-  }
-
-  expectEntityAlreadyInUse() {
-    const error = 'Expected new entity to be already in use';
-    expect(this.selectNewBtn.disabled).toBe(true, error);
-    expect(this.freeStatusWrapper.innerHTML).toContain('fa-times-circle', error);
-    expect(this.freeStatusWrapper.innerText).toContain('The entry is already in use', error);
-  }
+class SelectCreatureComponentPage extends SelectPageObject<SelectCreatureComponent> {
+  ID_FIELD = 'entry';
+  get searchSubnameInput() { return this.query<HTMLInputElement>('#subname'); }
 }
 
 describe('SelectCreature integration tests', () => {
@@ -142,25 +109,26 @@ describe('SelectCreature integration tests', () => {
   for (const { id, entry, name, subname, limit, expectedQuery } of [
     {
       id: 1, entry: 1200, name: 'Helias', subname: 'Dev', limit: '100', expectedQuery:
-      'SELECT * FROM `creature_template` WHERE (entry LIKE \'%1200%\') AND (name LIKE \'%Helias%\') AND (subname LIKE \'%Dev%\') LIMIT 100'
+      'SELECT * FROM `creature_template` ' +
+        'WHERE (`entry` LIKE \'%1200%\') AND (`name` LIKE \'%Helias%\') AND (`subname` LIKE \'%Dev%\') LIMIT 100'
     },
     {
       id: 2, entry: '', name: 'Helias', subname: 'Dev', limit: '100', expectedQuery:
-        'SELECT * FROM `creature_template` WHERE (name LIKE \'%Helias%\') AND (subname LIKE \'%Dev%\') LIMIT 100'
+        'SELECT * FROM `creature_template` WHERE (`name` LIKE \'%Helias%\') AND (`subname` LIKE \'%Dev%\') LIMIT 100'
     },
     {
       id: 3, entry: '', name: 'Helias', subname: '', limit: '100', expectedQuery:
-        'SELECT * FROM `creature_template` WHERE (name LIKE \'%Helias%\') LIMIT 100'
+        'SELECT * FROM `creature_template` WHERE (`name` LIKE \'%Helias%\') LIMIT 100'
     },
     {
-      id: 4, entry: '', name: '', subname: 'Developer', limit: '', expectedQuery:
-        'SELECT * FROM `creature_template` WHERE (subname LIKE \'%Developer%\')'
+      id: 4, entry: '', name: '', subname: `it's a cool dev!`, limit: '', expectedQuery:
+        'SELECT * FROM `creature_template` WHERE (`subname` LIKE \'%it\\\'s a cool dev!%\')'
     },
   ]) {
     it(`searching an existing entity should correctly work [${id}]`, () => {
       querySpy.calls.reset();
       if (entry) {
-        page.setInputValue(page.searchEntryInput, entry);
+        page.setInputValue(page.searchIdInput, entry);
       }
       if (name) {
         page.setInputValue(page.searchNameInput, name);

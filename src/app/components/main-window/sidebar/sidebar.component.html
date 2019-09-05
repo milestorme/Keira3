@@ -112,13 +112,13 @@
                       </a>
                     </li>
                     <li>
-                      <a href="#" routerLinkActive="active" [routerLink]="'creature/spawns'">
-                        Spawns
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-spawn'">
+                        Spawn
                       </a>
                     </li>
                     <li>
-                      <a href="#" routerLinkActive="active" [routerLink]="'creature/spawns-addon'">
-                        Spawns Addon
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-spawn-addon'">
+                        Spawn Addon
                       </a>
                     </li>
                   </ng-container>
@@ -137,10 +137,55 @@
             <div class="sidebar-submenu" [@slide]="menuStates.quest">
               <ul>
                 <li>
-                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
-                    Coming soon...
+                  <a href="#" routerLinkActive="active" [routerLink]="'quest/select'">
+                    Select Quest Template
                   </a>
                 </li>
+                <ng-container *ngIf="questHandlerService.selected">
+                  <li>
+                    <a href="#" routerLinkActive="active" [routerLink]="'quest/quest-template'">
+                      Quest Template
+                    </a>
+                  </li>
+                  <ng-container *ngIf="!questHandlerService.isNew">
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/quest-template-addon'">
+                        Quest Template Addon
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/quest-offer-reward'">
+                        Quest Offer Reward
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/quest-request-items'">
+                        Quest Request Items
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/creature-queststarter'">
+                        Creature Queststarter
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/creature-questender'">
+                        Creature Questender
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/gameobject-queststarter'">
+                        Gameobject Queststarter
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/gameobject-questender'">
+                        Gameobject Questender
+                      </a>
+                    </li>
+                  </ng-container>
+                </ng-container>
+
               </ul>
             </div>
           </li>
@@ -150,14 +195,42 @@
               <i class="fa fa-pen"></i>
               <span>GameObject</span>
             </a>
-
             <div class="sidebar-submenu" [@slide]="menuStates.gameobject">
               <ul>
                 <li>
-                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
-                    Coming soon...
+                  <a href="#" routerLinkActive="active" [routerLink]="'gameobject/select'">
+                    Select Gameobject Template
                   </a>
                 </li>
+                <ng-container *ngIf="gameobjectHandlerService.selected">
+                  <li>
+                    <a href="#" routerLinkActive="active" [routerLink]="'gameobject/gameobject-template'">
+                      Gameobject Template
+                    </a>
+                  </li>
+                  <ng-container *ngIf="!gameobjectHandlerService.isNew">
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'gameobject/gameobject-template-addon'">
+                        Template Addon
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'gameobject/gameobject-questitem'">
+                        Quest Items
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'gameobject/gameobject-loot-template'">
+                        Gameobject Loot
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'gameobject/gameobject-spawn'">
+                        Spawns
+                      </a>
+                    </li>
+                  </ng-container>
+                </ng-container>
               </ul>
             </div>
           </li>
@@ -167,25 +240,58 @@
               <i class="fa fa-pen"></i>
               <span>Item</span>
             </a>
-
             <div class="sidebar-submenu" [@slide]="menuStates.item">
               <ul>
                 <li>
-                  <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
-                    Coming soon...
+                  <a href="#" routerLinkActive="active" [routerLink]="'item/select'">
+                    Select Item Template
                   </a>
                 </li>
+                <ng-container *ngIf="itemHandlerService.selected">
+                  <li>
+                    <a href="#" routerLinkActive="active" [routerLink]="'item/item-template'">
+                      Item Template
+                    </a>
+                  </li>
+                  <ng-container *ngIf="!itemHandlerService.isNew">
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'item/item-enchantment-template'">
+                        Enchantment Template
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'item/item-loot-template'">
+                        Item Loot
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'item/disenchant-loot-template'">
+                        Disenchant Loot
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'item/prospecting-loot-template'">
+                        Prospecting Loot
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'item/milling-loot-template'">
+                        Milling Loot
+                      </a>
+                    </li>
+                  </ng-container>
+                </ng-container>
               </ul>
             </div>
           </li>
 
-          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.smartAi === 'down' }">
-            <a (click)="toggleState('smartAi')">
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.gossip === 'down' }">
+            <a (click)="toggleState('gossip')">
               <i class="fa fa-pen"></i>
-              <span>SmartAI</span>
+              <span>Gossip</span>
             </a>
 
-            <div class="sidebar-submenu" [@slide]="menuStates.smartAi">
+            <div class="sidebar-submenu" [@slide]="menuStates.gossip">
               <ul>
                 <li>
                   <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
@@ -213,13 +319,13 @@
             </div>
           </li>
 
-          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.gossip === 'down' }">
-            <a (click)="toggleState('gossip')">
+          <li class="sidebar-dropdown" [ngClass]="{ 'active': menuStates.smartAi === 'down' }">
+            <a (click)="toggleState('smartAi')">
               <i class="fa fa-pen"></i>
-              <span>Gossip</span>
+              <span>SmartAI</span>
             </a>
 
-            <div class="sidebar-submenu" [@slide]="menuStates.gossip">
+            <div class="sidebar-submenu" [@slide]="menuStates.smartAi">
               <ul>
                 <li>
                   <a href="#" routerLinkActive="active" [routerLink]="'coming-soon'">
